@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 // import './App.css'
@@ -6,18 +6,40 @@ import viteLogo from "/vite.svg";
 function App() {
   const [value, setValue] = useState("");
   const handleClick = (val) => {
-    setValue(value + val);
+    setValue((prev) => prev + val);
   };
   const calculate = () => {
     try {
       setValue(eval(value).toString());
-    } catch  {
+    } catch {
       setValue("Error");
     }
   };
   const clear = () => {
     setValue("");
   };
+  const backspace = () => {
+    setValue((prev) => prev.slice(0, -1));
+  };
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const allowedKey = "0123456789-+*/.";
+      if (allowedKey.includes(e.key)) {
+        setValue((prev) => prev + e.key);
+      }
+      if (e.key === "Enter") {
+        calculate();
+      }
+      if (e.key === "Backspace") {
+        backspace();
+      }
+      if (e.key === "Escape") {
+        clear();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [value]);
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-900">
@@ -33,8 +55,8 @@ function App() {
           {["7", "8", "9", "/"].map((btn) => (
             <button
               key={btn}
-              onClick={()=>handleClick(btn)}
-              className=" bg-gray-600 text-white p-3 rounded text-lg hover:bg-gray-500"
+              onClick={() => handleClick(btn)}
+              className="btn"
             >
               {btn}
             </button>
@@ -42,8 +64,8 @@ function App() {
           {["4", "5", "6", "*"].map((btn) => (
             <button
               key={btn}
-              onClick={()=>handleClick(btn)}
-              className=" bg-gray-600 text-white p-3 rounded text-lg hover:bg-gray-500"
+              onClick={() => handleClick(btn)}
+              className="btn"
             >
               {btn}
             </button>
@@ -51,31 +73,53 @@ function App() {
           {["1", "2", "3", "-"].map((btn) => (
             <button
               key={btn}
-              onClick={()=>handleClick(btn)}
-              className=" bg-gray-600 text-white p-3 rounded text-lg hover:bg-gray-500"
+              onClick={() => handleClick(btn)}
+              className="btn"
             >
               {btn}
             </button>
           ))}
+          
           <button
-            onClick={clear}
-            className=" text-white p-3 rounded text-lg hover:bg-red-600 col-span-2 bg-red-500"
-          >
-            C
-          </button>
-          <button
-            onClick={()=>handleClick("0")}
-            className=" bg-gray-600 text-white p-3 rounded text-lg hover:bg-gray-500"
+            onClick={() => handleClick("0")}
+            className="btn"
           >
             0
           </button>
           <button
+            onClick={() => handleClick(".")}
+            className="btn"
+          >
+            .
+          </button>
+          <button
+            onClick={() => handleClick("+")}
+            className="btn"
+          >
+            +
+          </button>
+          <button
             onClick={calculate}
-            className=" bg-green-500  text-white p-3 rounded text-lg hover:bg-green-700"
+            className=" row-span-2  text-white p-3 rounded text-lg bg-green-500 hover:bg-green-700"
           >
             =
           </button>
+          <button
+            onClick={clear}
+            className=" text-white p-3 rounded text-lg col-span-2 hover:bg-red-600  bg-red-500 "
+          >
+            C
+          </button>
+          
+          <button
+            onClick={() => handleClick("%")}
+            className="btn"
+          >
+            %
+          </button>
+          
         </div>
+        <p className="text-gray-400 text-sm mt-4 text-center">Keyboard: 0-9 - + * / . | Enter = | Backspace | Esc </p>
       </div>
     </div>
   );
