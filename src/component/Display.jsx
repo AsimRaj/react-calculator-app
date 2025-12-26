@@ -5,7 +5,7 @@ export const Display = ({ value }) => {
     <input
       type="text"
       readOnly
-      value={value || "0"}
+      value={value }
       className="w-full p-3 outline-none mb-4 text-right text-xl rounded bg-gray-700 text-white
       "
     />

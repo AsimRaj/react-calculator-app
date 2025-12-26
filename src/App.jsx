@@ -8,9 +8,30 @@ import { Keypad } from "./component/Keypad";
 function App() {
   const [value, setValue] = useState("");
   const handleClick = (val) => {
-    setValue((prev) => prev + val);
+    setValue((prev) => {
+      const lastChar = prev.slice(-1);
+      const operators= "+-*/";
+      //prevent starting with operator (except -)
+      
+      if (prev === "" && operators.includes(val) && val !== "-") {
+      return prev;
+    }
+
+      //Prevent two operators in one row
+      if(operators.includes(lastChar) && operators.includes(val)){
+        return prev;
+      }
+      //Prevent multiple decimal in one number
+      if( val === "."){
+        const lastNumber = prev.split(/[+\-*/]/).pop();
+        if(lastNumber.includes(".")) return prev;
+        if(lastChar === "" || operators.includes(lastChar)) return prev;
+      }
+      return prev +val;
+    });
   };
   const calculate = () => {
+    if(!value) return;
     try {
       setValue(eval(value).toString());
     } catch {
